@@ -1,31 +1,28 @@
 version: 2.1
+
 jobs:
-  say-hello:
+  save_hello_world_output:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
-      - checkout
-      - run:
-          name: "Say and print hello world"
-          command: echo "text to output here" > output.txt
+      - run: echo "hello world" > ~/output.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - output.txt
-  print-output-file:
-      docker:
-        - image: cimg/base:stable
-      steps:
-        - checkout
-        - attach_workspace:
-            at: ~/
-        - run:
-            name: "view-output-file"
-            command: cat ~/output.txt
+
+  print_output_file:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run: cat ~/output.txt
+
 workflows:
-  default:
+  my_workflow:
     jobs:
-      - say-hello
-      - print-output-file:
+      - save_hello_world_output
+      - print_output_file:
           requires:
-            - say-hello
+            - save_hello_world_output
